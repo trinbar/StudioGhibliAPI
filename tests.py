@@ -35,11 +35,12 @@ class SGApi(TestCase):
             self.assertIn(example_person["url"], get_people().json)
 
     def test_get_brown_haired_humans(self):
-        """Tests /people/brown-haired' endpoint"""
-        res = self.client.get('/people/brown-haired')
+        """Tests /people/<string:color>-haired' endpoint"""
+        res = self.client.get('/people/<string:color>-haired')
         self.assertEqual(res.status_code, 200)
 
         with app.app_context():
+            # Test brown-hair only; will have to write a test for each color
             example_person = {
                 "id": "ba924631-068e-4436-b6de-f3283fa848f0",
                 "name": "Ashitaka",
@@ -51,7 +52,7 @@ class SGApi(TestCase):
                 "species": "https://ghibliapi.herokuapp.com/species/af3910a6-429f-4c74-9ad5-dfe1c4aa04f2",
                 "url": "https://ghibliapi.herokuapp.com/people/ba924631-068e-4436-b6de-f3283fa848f0"
                 }
-            self.assertIn(example_person["url"], get_brown_haired_humans().json)
+            self.assertIn(example_person["url"], get_humans('Brown').json)
     
     def test_get_pilots(self):
         """Tests /pilots endpoint"""

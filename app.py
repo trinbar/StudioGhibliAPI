@@ -38,27 +38,28 @@ def get_people():
 
     return jsonify(people)
 
-@app.route('/people/brown-haired', methods=['GET'])
-def get_brown_haired_humans():
-    """Returns all brown-haired humans"""
+@app.route('/people/<string:color>-haired', methods=['GET'])
+def get_humans(color):
+    """Returns all humans with given hair-color"""
 
     # Initiate answer listd
-    brown_haired_people = []
+    results = []
 
     all_people = requests.get(URL + '/species/' + HUMAN_SPECIES_ID)
     all_people = all_people.json()["people"]
+    query_color = color.title()
 
     # Iterate through people at endpoint '/people'
     for url in all_people:
         res = requests.get(url)
         data = res.json()
         hair_color = data["hair_color"]
-        if "Brown" in hair_color:
-            brown_haired_people.append(url)
-    # If "Brown" in "hair_colors".value, append people_id empty list
+        if query_color in hair_color:
+            results.append(url)
+    # If query_color in "hair_colors".value, append people_id empty list
 
     # Return the empty list
-    return jsonify(brown_haired_people)
+    return jsonify(results)
 
 @app.route('/pilots', methods=['GET'])
 def get_pilots():
@@ -124,7 +125,6 @@ def delete_nonsg_person(nonsg_id):
     """Deletes a non-Studio Ghibli person"""
 
     nonsg_person_to_delete = [person for person in nonsg_people if person["id"] == nonsg_id]
-    print('delete this person: ', nonsg_person_to_delete)
     
     if len(nonsg_person_to_delete) == 0:
         return make_response(jsonify({
