@@ -68,7 +68,7 @@ class SGApi(TestCase):
             self.assertIn(example_pilot, get_pilots().json)
 
     def test_create_nonsg_person(self):
-        """Tests /nonsg_people endpoint with POST method and outcome"""
+        """Tests '/nonsg_people' endpoint with POST method and outcome"""
 
         with app.app_context():
             r = self.client.get('/nonsg_people')
@@ -89,15 +89,19 @@ class SGApi(TestCase):
             self.assertIn(example_person, get_nonsg_people().json["nonsg_people"])
 
     def test_delete_nonsg_person(self):
-        """Tests /nonsg_people endpoint with DELETE method and outcome"""
+        """Tests '/nonsg_people/<int: nonsg_id>' endpoint with DELETE method and outcome"""
 
         with app.app_context():
-            # example_nonsg_id = 1
-            # print(delete_nonsg_person(example_nonsg_id).json["nonsg_person_deleted"])
-            # deleted_person = delete_nonsg_person(example_nonsg_id).json["nonsg_person_deleted"]
             res = self.client.delete('/nonsg_people/1', follow_redirects=True)
             self.assertEqual(res.status_code, 200)
-            # self.assertNotIn(deleted_person, get_nonsg_people().json["nonsg_people"])
+
+    def test_update_nonsg_person(self):
+        """Tests '/nonsg_people/<int: nonsg_id>' endpoint with PUT method and outcome"""
+
+        with app.app_context():
+            example_update = {"name": "Trinity Dunbar"}
+            res = self.client.put('/nonsg_people/2', data=example_update)
+            self.assertEqual(res.status_code, 200)
 
 
 if __name__ == "__main__":

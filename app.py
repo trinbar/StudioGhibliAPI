@@ -42,7 +42,7 @@ def get_people():
 def get_humans(color):
     """Returns all humans with given hair-color"""
 
-    # Initiate answer listd
+    # Initiate answer list
     results = []
 
     all_people = requests.get(URL + '/species/' + HUMAN_SPECIES_ID)
@@ -119,6 +119,25 @@ def create_nonsg_person():
     nonsg_people.append(nonsg_person_to_create)
 
     return make_response(jsonify({"nonsg_person created": nonsg_person_to_create}), 201)
+
+@app.route('/nonsg_people/<int:nonsg_id>', methods=['PUT'])
+def update_nonsg_person(nonsg_id):
+    """Update a non-Studio Ghibli person"""
+    nonsg_person_to_update = [person for person in nonsg_people if person["id"] == nonsg_id]
+
+    error_message = make_response(jsonify({
+        "error": "Please ensure to input fields: id and name in valid JSON format"
+    }), 400)
+
+    if len(nonsg_person_to_update) == 0:
+        return error_message
+    else:
+        updated_nonsg_person = nonsg_person_to_update[0]
+        updated_nonsg_person["id"] = nonsg_id
+        updated_nonsg_person["name"] = request.get_json()
+        updated_nonsg_person["species"] = HUMAN_SPECIES_ID
+
+        return jsonify({"updated person": "updated_nonsg_person"})
 
 @app.route('/nonsg_people/<int:nonsg_id>', methods=['DELETE'])
 def delete_nonsg_person(nonsg_id):
